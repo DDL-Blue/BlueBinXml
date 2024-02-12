@@ -7,19 +7,20 @@
 *            \/        \/        \/         \/                 \/
 */
 
-#pragma once
+#include "../convertor/Convertor.hpp"
+#include "../convertor/3rdParty/rapidxml/rapidxml.hpp"
 
-#include "Convertor.hpp"
+#include <cassert>
 
-namespace BlueBinXml::Convertor{
-
-template<typename T>
-void CConvertor::Write(const T& data){
-    const uint8_t* rawData = reinterpret_cast<const uint8_t*>(&data);
-    for(size_t i=0; i<sizeof(T); ++i){
-        m_Result.push_back(rawData[i]);
-    }
+/*----------------------------------------------------------------------*/
+void TestFile(const char* filename){
+    
 }
 
-
+/*======================================================================*/
+int main(int argc, char const *argv[])
+{
+    
+    /* code */
+    return 0;
 }

@@ -11,12 +11,14 @@
 
 #include "../BlueBinXml.hpp"
 
-#include "../3rdParty/rapidxml/rapidxml.hpp"
+#include "3rdParty/rapidxml/rapidxml.hpp"
 
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <iostream>
+#include <memory>
 
 namespace BlueBinXml::Convertor{
 
@@ -27,10 +29,13 @@ namespace BlueBinXml::Convertor{
     using TXmlCharacter = char; 
 
     class CConvertor{
+    public:
         std::vector<uint8_t> Convert(TXmlCharacter*);
+        bool Deconvert(std::unique_ptr<uint8_t>& input, size_t size, std::ostream & output);  
 
     private:
         using TXmlNode = rapidxml::xml_node<TXmlCharacter>;
+        using TXmlDocument = rapidxml::xml_document<TXmlCharacter>;
 
         struct SNodeDescription{
             TId m_Id;
@@ -52,6 +57,7 @@ namespace BlueBinXml::Convertor{
         void WriteString(TId id, const std::string& str);
         void AddObjectLocation(TId id, TOffset offset);
         void RelocateReferences(TId nodeId);
+        void DecodeNode(const BlueBinXml::CNode & input, TXmlNode& output, TXmlDocument& outputDocument);
 
         void ReplaceIdWithOffset(TOffset base, TOffset& offset);
         TId AddString(const std::string& str);

@@ -22,8 +22,6 @@ namespace BlueBinXml{
     using TOffset = uint32_t;
     using TCount = uint32_t;
 
-    
-
     /*======================================================================*/
     // TODO alignas
     class CNode{
@@ -52,7 +50,7 @@ namespace BlueBinXml{
 
         /*----------------------------------------------------------------------*/
         TOffset GetChildRefOffset(TCount id) const{
-            return m_AttributeCount*sizeof(SAttributeDef) + id*sizeof(TOffset);
+            return sizeof(CNode) + m_AttributeCount*sizeof(SAttributeDef) + id*sizeof(TOffset);
         }
 
     public:
@@ -120,13 +118,14 @@ namespace BlueBinXml{
     /*======================================================================*/
     class CDocument{
     public:
-        CDocument(std::unique_ptr<void*> data, const size_t size)
+        CDocument(std::unique_ptr<uint8_t>&& data, const size_t size)
         : m_Data(std::move(data))
         , m_DataSize(size)
         , m_IsValid(size>sizeof(CNode)){ 
-            // TODO proper check, check data for null
+            // TODO proper boundary check, check data for null
         }
         
+        /*----------------------------------------------------------------------*/
         const CNode* GetRootNode() const{
             if (!m_IsValid){
                 return nullptr;
@@ -134,11 +133,16 @@ namespace BlueBinXml{
             return reinterpret_cast<CNode*>(m_Data.get());
         }
 
+        /*----------------------------------------------------------------------*/
+        std::unique_ptr<uint8_t> Release(){
+            m_IsValid = false;
+            return std::move(m_Data);
+        }
 
     private:
-        std::unique_ptr<void*>  m_Data;
-        size_t                  m_DataSize;
-        bool                    m_IsValid;
+        std::unique_ptr<uint8_t>   m_Data;
+        size_t                     m_DataSize;
+        bool                       m_IsValid;
     };
 }
 
